@@ -1,0 +1,29 @@
+<?php
+
+namespace App\Providers;
+
+use JPeters\Architect\Providers\ArchitectApplicationServiceProvider;
+
+class ArchitectServiceProvider extends ArchitectApplicationServiceProvider
+{
+    /**
+     * Regsiter your Architect Blueprints here
+     *
+     * @return array
+     */
+    protected function blueprints(): array
+    {
+        return [];
+    }
+
+    /**
+     * Determine whether the authenticated user can access Architect
+     *
+     * @param $user
+     * @return bool
+     */
+    protected function architectGateway($user): bool
+    {
+        return config('app.env') === 'local';
+    }
+}
