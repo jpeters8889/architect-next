@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8">
 
@@ -9,6 +9,9 @@
 
     <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+
+    @livewireStyles
+
     <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.8.0/dist/alpine.min.js" defer></script>
 </head>
 <body class="">
@@ -23,8 +26,6 @@
 
         <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-200">
             <div class="container mx-auto px-6 py-8">
-                <h3 class="text-gray-700 text-3xl font-medium">Dashboard</h3>
-
                 {{ $slot }}
             </div>
         </main>
@@ -34,5 +35,8 @@
         </div>
     </div>
 </div>
+
+@livewireScripts
+
 </body>
 </html>

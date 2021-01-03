@@ -50,7 +50,7 @@ class ArchitectCoreServiceProvider extends ServiceProvider
                 'middleware' => $config->get('architect.auth.middleware'),
             ],
             function ($router) {
-                require __DIR__ . '/../routes/architect.php';
+                require __DIR__ . '/../../routes/architect.php';
             }
         );
     }

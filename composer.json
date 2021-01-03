@@ -13,7 +13,8 @@
     ],
     "require": {
         "php": "^8.0",
-        "laravel/framework": "^8.20.1"
+        "laravel/framework": "^8.20.1",
+        "livewire/livewire": "^2.3"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.17",
