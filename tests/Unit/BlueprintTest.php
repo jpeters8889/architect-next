@@ -3,7 +3,6 @@
 namespace JPeters\Architect\Tests\Unit;
 
 use Illuminate\Database\Eloquent\Builder;
-use JPeters\Architect\Blueprints\Manager as BlueprintManager;
 use JPeters\Architect\Tests\ArchitectTestCase;
 use JPeters\Architect\Tests\Laravel\Blueprints\Blog as BlogBlueprint;
 use JPeters\Architect\Tests\Laravel\Models\Blog as BlogModel;
@@ -69,5 +68,11 @@ class BlueprintTest extends ArchitectTestCase
     public function it_returns_the_number_of_rows_per_page()
     {
         $this->assertIsInt($this->blogBlueprint->perPage());
+    }
+
+    /** @test */
+    public function it_knows_whether_it_is_searchable()
+    {
+        $this->assertIsBool($this->blogBlueprint->searchable());
     }
 }

@@ -48,6 +48,18 @@ class BlueprintTableTest extends ArchitectTestCase
     }
 
     /** @test */
+    public function it_shows_the_search_box_if_the_blueprint_is_searchable()
+    {
+        $this->withoutExceptionHandling();
+
+        Livewire::test(Table::class, ['route' => 'blog'])
+            ->assertSee('Search...')
+            ->assertSeeHtml('<i class="fas fa-search"></i>')
+            ->set('searchable', false)
+            ->assertDontSee('Search...');
+    }
+
+    /** @test */
     public function it_shows_the_table_colums()
     {
         $request = Livewire::test(Table::class, ['route' => 'blog']);
@@ -67,5 +79,25 @@ class BlueprintTableTest extends ArchitectTestCase
         foreach ($this->tableRenderer->render()['columns'] as $column) {
             $request->assertSee($blog->$column);
         }
+    }
+
+    /** @test */
+    public function it_can_search_for_data()
+    {
+        factory(Blog::class)->create(['title' => 'hidden blog']);
+        factory(Blog::class)->create(['title' => 'foo blog']);
+
+        $livewire = Livewire::test(Table::class, ['route' => 'blog'])
+            ->assertSee('hidden blog')
+            ->assertSee('foo blog');
+
+        $this->assertCount(2, $livewire->get('data'));
+
+        $livewire->set('searchText', 'foo blog')->call('runSearch');
+
+        $this->assertCount(1, $livewire->get('data'));
+
+        $livewire->assertDontSee('hidden blog')
+            ->assertSee('foo blog');
     }
 }

@@ -53,4 +53,9 @@ abstract class Blueprint
     }
 
     abstract public function plans(): array;
+
+    public function searchable(): bool
+    {
+        return true;
+    }
 }
