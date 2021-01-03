@@ -3,6 +3,7 @@
 namespace JPeters\Architect\Tests\Laravel\Blueprints;
 
 use JPeters\Architect\Blueprints\Blueprint;
+use JPeters\Architect\Plans\TextField;
 use JPeters\Architect\Tests\Laravel\Models\Blog as BlogModel;
 
 class Blog extends Blueprint
@@ -15,7 +16,7 @@ class Blog extends Blueprint
     public function plans(): array
     {
         return [
-
+            TextField::build('title'),
         ];
     }
 

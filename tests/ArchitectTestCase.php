@@ -3,11 +3,13 @@
 namespace JPeters\Architect\Tests;
 
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Gate;
 use JPeters\Architect\Architect;
 use JPeters\Architect\Providers\ArchitectApplicationServiceProvider;
 use JPeters\Architect\Providers\ArchitectCoreServiceProvider;
 use JPeters\Architect\Tests\Laravel\Models\User;
 use JPeters\Architect\Tests\Laravel\Providers\TestingServiceProvider;
+use Livewire\LivewireServiceProvider;
 use Orchestra\Testbench\TestCase;
 
 class ArchitectTestCase extends TestCase
@@ -42,6 +44,7 @@ class ArchitectTestCase extends TestCase
     protected function getPackageProviders($app)
     {
         return [
+            LivewireServiceProvider::class,
             ArchitectCoreServiceProvider::class,
             ArchitectApplicationServiceProvider::class,
             TestingServiceProvider::class,
@@ -59,5 +62,12 @@ class ArchitectTestCase extends TestCase
             'database' => ':memory:',
             'prefix' => '',
         ]);
+    }
+
+    protected function login(?User $user = null)
+    {
+        Gate::define('accessArchitect', fn($user) => true);
+
+        $this->actingAs($user ?? factory(User::class)->create());
     }
 }

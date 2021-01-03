@@ -8,7 +8,9 @@ use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use JPeters\Architect\Commands\InstallArchitectCommand;
+use JPeters\Architect\Http\Livewire\Blueprints\Table;
 use JPeters\Architect\Http\Views\NavigationComposer;
+use Livewire\Livewire;
 
 class ArchitectCoreServiceProvider extends ServiceProvider
 {
@@ -21,11 +23,11 @@ class ArchitectCoreServiceProvider extends ServiceProvider
 
         $this->registerViews();
         $this->registerViewComposers();
+        $this->registerGlobalLivewireComponents();
         $this->registerRoutes();
-        $this->registerMacros();
     }
 
-    protected function registerConsoleCommands()
+    protected function registerConsoleCommands(): void
     {
         $this->commands([
             InstallArchitectCommand::class,
@@ -76,10 +78,8 @@ class ArchitectCoreServiceProvider extends ServiceProvider
         View::composer('architect::*', NavigationComposer::class);
     }
 
-    protected function registerMacros(): void
+    protected function registerGlobalLivewireComponents(): void
     {
-//        Request::macro('architectActivePage', function() {
-//
-//        });
+        Livewire::component('architect-blueprint-table', Table::class);
     }
 }

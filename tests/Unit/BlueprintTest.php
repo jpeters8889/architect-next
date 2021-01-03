@@ -64,4 +64,10 @@ class BlueprintTest extends ArchitectTestCase
     {
         $this->assertIsBool($this->blogBlueprint->paginate());
     }
+
+    /** @test */
+    public function it_returns_the_number_of_rows_per_page()
+    {
+        $this->assertIsInt($this->blogBlueprint->perPage());
+    }
 }

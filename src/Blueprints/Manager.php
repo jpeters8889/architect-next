@@ -3,6 +3,7 @@
 namespace JPeters\Architect\Blueprints;
 
 use Illuminate\Support\Collection;
+use JPeters\Architect\Exceptions\BlueprintNotFoundException;
 
 class Manager
 {
@@ -31,6 +32,8 @@ class Manager
 
             return $concreteBlueprint->blueprintRoute() === $key;
         })->first();
+
+        throw_if(!$resolved, new BlueprintNotFoundException());
 
         return new $resolved();
     }

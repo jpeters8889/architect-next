@@ -47,5 +47,10 @@ abstract class Blueprint
         return true;
     }
 
+    public function perPage(): int
+    {
+        return 25;
+    }
+
     abstract public function plans(): array;
 }

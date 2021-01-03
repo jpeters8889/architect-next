@@ -6,8 +6,10 @@ use Illuminate\View\View;
 
 class BlueprintController
 {
-    public function index(): View
+   public function index(): View
     {
-        return view('architect::blueprints.index');
+        return view('architect::blueprints.index', [
+            'blueprint' => request()->route('blueprint')
+        ]);
     }
 }
