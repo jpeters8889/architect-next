@@ -19,9 +19,6 @@ class InstallArchitectCommand extends Command
 
         $this->comment('Publishing Architect Service Provider');
         $this->callSilent('vendor:publish', ['--tag' => 'architect-provider']);
-
-        $this->info('Registering Service Provider');
-        $this->registerServiceProvider();
     }
 
     protected function getAppNamespace(): string

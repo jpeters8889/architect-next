@@ -2,7 +2,9 @@
 
 namespace JPeters\Architect\Blueprints;
 
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 abstract class Blueprint
@@ -20,6 +22,16 @@ abstract class Blueprint
     public function blueprintBuilding(): string
     {
         return 'Main';
+    }
+
+    public function canAdd(Authenticatable $user): bool
+    {
+        return true;
+    }
+
+    public function canEdit(Model $model, Authenticatable $user): bool
+    {
+        return true;
     }
 
     public function displayCount(): int

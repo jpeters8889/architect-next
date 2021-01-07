@@ -18,12 +18,9 @@ class ArchitectApplicationServiceProvider extends ServiceProvider
     {
         $this->bootArchitectLibraries();
         $this->defineArchitectGateway();
+        $this->registerBlueprints();
 
-        Architect::isRunning(function () {
-            $this->registerBlueprints();
-        });
-
-        $this->app->instance(Architect::class, $this->architect);
+        $this->app->singleton(Architect::class, fn() => $this->architect);
     }
 
     private function bootArchitectLibraries(): void

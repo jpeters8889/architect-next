@@ -5,7 +5,9 @@ namespace JPeters\Architect\Tests\Unit;
 use Illuminate\Database\Eloquent\Builder;
 use JPeters\Architect\Tests\ArchitectTestCase;
 use JPeters\Architect\Tests\Laravel\Blueprints\Blog as BlogBlueprint;
+use JPeters\Architect\Tests\Laravel\Models\Blog;
 use JPeters\Architect\Tests\Laravel\Models\Blog as BlogModel;
+use JPeters\Architect\Tests\Laravel\Models\User;
 
 class BlueprintTest extends ArchitectTestCase
 {
@@ -74,5 +76,17 @@ class BlueprintTest extends ArchitectTestCase
     public function it_knows_whether_it_is_searchable()
     {
         $this->assertIsBool($this->blogBlueprint->searchable());
+    }
+
+    /** @test */
+    public function it_knows_whether_it_the_user_can_add_a_new_record()
+    {
+        $this->assertIsBool($this->blogBlueprint->canAdd(factory(User::class)->make()));
+    }
+
+    /** @test */
+    public function it_knows_whether_it_the_user_can_edit_a_new_record()
+    {
+        $this->assertIsBool($this->blogBlueprint->canEdit(new Blog(), factory(User::class)->make()));
     }
 }

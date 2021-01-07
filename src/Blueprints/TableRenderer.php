@@ -3,6 +3,7 @@
 namespace JPeters\Architect\Blueprints;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use JPeters\Architect\Plans\Plan;
 
 class TableRenderer
@@ -14,16 +15,7 @@ class TableRenderer
         $this->blueprint = $blueprint;
     }
 
-    public function render(): array
-    {
-        return [
-            'headers' => $this->tableHeaders(),
-            'columns' => $this->modelColumns(),
-            'data' => $this->tableData(),
-        ];
-    }
-
-    private function tableHeaders(): iterable
+    public function headers(): Collection
     {
         return collect($this->blueprint->plans())
             ->filter(fn(Plan $plan) => $plan->isAvailableOnTableView())
@@ -31,7 +23,7 @@ class TableRenderer
             ->values();
     }
 
-    private function modelColumns(): iterable
+    public function columns(): Collection
     {
         return collect($this->blueprint->plans())
             ->filter(fn(Plan $plan) => $plan->isAvailableOnTableView())
@@ -39,7 +31,7 @@ class TableRenderer
             ->values();
     }
 
-    private function tableData(): Builder
+    public function data(): Builder
     {
         $data = $this->blueprint->getData();
 

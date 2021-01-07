@@ -50,13 +50,22 @@ class BlueprintTableTest extends ArchitectTestCase
     /** @test */
     public function it_shows_the_search_box_if_the_blueprint_is_searchable()
     {
-        $this->withoutExceptionHandling();
-
         Livewire::test(Table::class, ['route' => 'blog'])
             ->assertSee('Search...')
             ->assertSeeHtml('<i class="fas fa-search"></i>')
-            ->set('searchable', false)
+            ->set('settings.searchable', false)
             ->assertDontSee('Search...');
+    }
+
+    /** @test */
+    public function it_shows_the_add_button_if_the_the_blueprint_is_addable()
+    {
+        $this->withoutExceptionHandling();
+
+        Livewire::test(Table::class, ['route' => 'blog'])
+            ->assertSee('Add New')
+            ->set('settings.canAdd', false)
+            ->assertDontSee('Add New');
     }
 
     /** @test */
@@ -64,7 +73,7 @@ class BlueprintTableTest extends ArchitectTestCase
     {
         $request = Livewire::test(Table::class, ['route' => 'blog']);
 
-        foreach ($this->tableRenderer->render()['headers'] as $header) {
+        foreach ($this->tableRenderer->headers() as $header) {
             $request->assertSee($header);
         }
     }
@@ -76,7 +85,7 @@ class BlueprintTableTest extends ArchitectTestCase
 
         $request = Livewire::test(Table::class, ['route' => 'blog']);
 
-        foreach ($this->tableRenderer->render()['columns'] as $column) {
+        foreach ($this->tableRenderer->columns() as $column) {
             $request->assertSee($blog->$column);
         }
     }
@@ -91,11 +100,11 @@ class BlueprintTableTest extends ArchitectTestCase
             ->assertSee('hidden blog')
             ->assertSee('foo blog');
 
-        $this->assertCount(2, $livewire->get('data'));
+        $this->assertCount(2, $livewire->get('currentData'));
 
         $livewire->set('searchText', 'foo blog')->call('runSearch');
 
-        $this->assertCount(1, $livewire->get('data'));
+        $this->assertCount(1, $livewire->get('currentData'));
 
         $livewire->assertDontSee('hidden blog')
             ->assertSee('foo blog');

@@ -24,48 +24,27 @@ class BlueprintTableRendererTest extends ArchitectTestCase
     }
 
     /** @test */
-    public function it_returns_an_array_from_the_render_function()
-    {
-        $this->assertIsArray($this->tableRenderer->render());
-    }
-
-    /** @test */
-    public function it_returns_the_required_keys()
-    {
-        $keys = ['headers', 'columns', 'data'];
-        $rendered = $this->tableRenderer->render();
-
-        foreach ($keys as $key) {
-            $this->assertArrayHasKey($key, $rendered);
-        }
-    }
-
-    /** @test */
     public function it_returns_the_appropiate_column_names_from_the_blueprint()
     {
-        $rendered = $this->tableRenderer->render();
-
         collect($this->blueprint->plans())
             ->filter(fn(Plan $plan) => $plan->isAvailableOnTableView())
             ->map(fn(Plan $plan) => $plan->column())
-            ->each(fn($header) => $this->assertContains($header, $rendered['columns']));
+            ->each(fn($header) => $this->assertContains($header, $this->tableRenderer->columns()));
     }
 
     /** @test */
     public function it_returns_the_appropiate_headers_from_the_blueprint()
     {
-        $rendered = $this->tableRenderer->render();
-
         collect($this->blueprint->plans())
             ->filter(fn(Plan $plan) => $plan->isAvailableOnTableView())
             ->map(fn(Plan $plan) => $plan->label())
-            ->each(fn($header) => $this->assertContains($header, $rendered['headers']));
+            ->each(fn($header) => $this->assertContains($header, $this->tableRenderer->headers()));
     }
 
     /** @test */
     public function it_returns_the_data_as_a_query_builder_instance_for_the_table()
     {
-        $this->assertInstanceOf(Builder::class, $this->tableRenderer->render()['data']);
+        $this->assertInstanceOf(Builder::class, $this->tableRenderer->data());
     }
 
     /** @test */
@@ -73,7 +52,7 @@ class BlueprintTableRendererTest extends ArchitectTestCase
     {
         factory(Blog::class, 15)->create();
 
-        $data = $this->tableRenderer->render()['data']->get();
+        $data = $this->tableRenderer->data()->get();
 
         $this->assertCount(15, $data);
     }
@@ -85,7 +64,7 @@ class BlueprintTableRendererTest extends ArchitectTestCase
         factory(Blog::class)->create(['title' => 'Third', 'created_at' => Carbon::now()->subDay()]);
         factory(Blog::class)->create(['title' => 'First', 'created_at' => Carbon::now()->addHour()]);
 
-        $data = $this->tableRenderer->render()['data']->get();
+        $data = $this->tableRenderer->data()->get();
 
         $this->assertEquals('First', $data[0]->title);
         $this->assertEquals('Second', $data[1]->title);
