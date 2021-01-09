@@ -4,6 +4,7 @@ namespace JPeters\Architect\Http\Livewire\Blueprints;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -22,14 +23,15 @@ class Table extends Component
     public string $title = '';
     public ?Collection $headers = null;
     public ?Collection $columns = null;
-    public iterable $currentData = [];
+    public Collection $currentData;
 
     protected Builder $data;
+    protected ?LengthAwarePaginator $paginator = null;
 
     public array $settings = [
-      'paginated' => false,
-      'searchable' => true,
-      'canAdd' => false,
+        'paginated' => false,
+        'searchable' => true,
+        'canAdd' => false,
     ];
 
     public string $searchText = '';
@@ -50,20 +52,24 @@ class Table extends Component
         return view('architect::livewire.blueprints.table');
     }
 
-    protected function populateTableData(): iterable
+    protected function populateTableData(): Collection
     {
         $builder = $this->tableRenderer->data();
 
         if ($this->settings['searchable']) {
-            foreach ($this->columns as $column) {
-                $builder->where($column, 'like', "%{$this->searchText}%");
-            }
+            $builder->where(function (Builder $query) {
+                foreach ($this->columns as $column) {
+                    $query->orWhere($column, 'like', "%{$this->searchText}%");
+                }
+            });
         }
 
         $this->data = $builder;
 
         if ($this->settings['paginated']) {
-            return $this->data->paginate($this->blueprint->perPage())->items();
+            $this->paginator = $this->data->paginate($this->blueprint->perPage(), page: $this->page);
+
+            return collect($this->paginator->items());
         }
 
         return $this->data->get();
@@ -87,12 +93,14 @@ class Table extends Component
 
         $this->settings['searchable'] = $this->blueprint->searchable();
         $this->settings['canAdd'] = $this->blueprint->canAdd(auth()->user());
+        $this->settings['paginated'] = $this->blueprint->paginate();
 
         $this->hasBootstrapped = true;
     }
 
-    public function runSearch()
+    public function runSearch(): void
     {
+        $this->resetPage();
         $this->bootstrap();
 
         $this->currentData = $this->populateTableData();
@@ -100,6 +108,23 @@ class Table extends Component
 
     public function canEditRow(Model $model, Authenticatable $user): bool
     {
-        return $this->blueprint->canEdit($model, $user);
+        return $this->blueprint?->canEdit($model, $user) ?? false;
+    }
+
+    public function getPaginationLinksProperty(): ?Htmlable
+    {
+        if(!$this->settings['paginated']) {
+            return null;
+        }
+
+        return $this->paginator->links();
+    }
+
+    public function setPage($page)
+    {
+        $this->page = $page;
+
+        $this->bootstrap();
+        $this->currentData = $this->populateTableData();
     }
 }

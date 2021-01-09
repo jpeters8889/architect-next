@@ -31,13 +31,13 @@
             @endforeach
 
             @if($settings['canAdd'])
-                    <x-architect::components.table.thead />
+                <x-architect::components.table.thead/>
             @endif
         </tr>
         </thead>
 
         <tbody class="bg-white">
-        @foreach($currentData as $row)
+        @forelse($currentData as $row)
             <tr>
                 @foreach($columns as $column)
                     <x-architect::components.table.tcell>
@@ -53,7 +53,17 @@
                     </x-architect::components.table.tcell>
                 @endif
             </tr>
-        @endforeach
+        @empty
+            <tr>
+                sdgsd
+            </tr>
+        @endforelse
         </tbody>
     </x-architect::components.table>
+
+    @if($settings['paginated'])
+        <div class="mt-4">
+            {!! $this->paginationLinks !!}
+        </div>
+    @endif
 </div>
