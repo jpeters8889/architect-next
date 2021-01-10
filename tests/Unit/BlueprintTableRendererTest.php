@@ -4,6 +4,7 @@ namespace JPeters\Architect\Tests\Unit;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use JPeters\Architect\Blueprints\TableRenderer;
 use JPeters\Architect\Plans\Plan;
 use JPeters\Architect\Tests\ArchitectTestCase;
@@ -24,12 +25,29 @@ class BlueprintTableRendererTest extends ArchitectTestCase
     }
 
     /** @test */
+    public function it_returns_the_blueprints_plans()
+    {
+        $this->assertInstanceOf(Collection::class, $this->tableRenderer->plans());
+    }
+
+    /** @test */
+    public function it_returns_the_plans_in_the_correct_format()
+    {
+        $this->tableRenderer->plans()->each(function ($plan) {
+            foreach (['column', 'index'] as $key) {
+                $this->assertArrayHasKey($key, $plan);
+            }
+        });
+    }
+
+    /** @test */
     public function it_returns_the_appropiate_column_names_from_the_blueprint()
     {
         collect($this->blueprint->plans())
             ->filter(fn(Plan $plan) => $plan->isAvailableOnTableView())
-            ->map(fn(Plan $plan) => $plan->column())
-            ->each(fn($header) => $this->assertContains($header, $this->tableRenderer->columns()));
+            ->each(function (Plan $plan) {
+//                dd($plan);
+            });
     }
 
     /** @test */

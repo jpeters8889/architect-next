@@ -3,6 +3,7 @@
 namespace JPeters\Architect\Tests\Plans;
 
 use Illuminate\Database\Eloquent\Model;
+use JPeters\Architect\Plans\BaseTableComponent;
 use JPeters\Architect\Plans\Plan;
 use JPeters\Architect\Tests\ArchitectTestCase;
 use JPeters\Architect\Tests\Laravel\Models\Blog;
@@ -128,7 +129,15 @@ abstract class PlanTestCase extends ArchitectTestCase
         $this->assertEquals('bar', $plan->currentValue($blog));
     }
 
+    /** @test */
+    public function it_returns_a_livewire_view_for_the_table()
+    {
+        $class = $this->buildPlan()->tableComponent();
 
+        $component = new $class();
+
+        $this->assertInstanceOf(BaseTableComponent::class, $component);
+    }
 
     protected function buildPlan(string $column = 'foo', ?string $label = null): Plan
     {

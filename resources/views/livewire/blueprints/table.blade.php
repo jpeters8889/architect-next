@@ -39,9 +39,18 @@
         <tbody class="bg-white">
         @forelse($currentData as $row)
             <tr>
-                @foreach($columns as $column)
+                @foreach($plans as $plan)
                     <x-architect::components.table.tcell>
-                        {!! $row->$column !!}
+                        @livewire(
+                            $plan['component'],
+                            [
+                                'model'=>$row,
+                                'route'=>$route,
+                                'index'=>$plan['index'],
+                                'column'=>$plan['column'],
+                            ],
+                            key($route.'-'.$plan['column'].'-'.$plan['index'].'-'.$row->getKey())
+                        )
                     </x-architect::components.table.tcell>
                 @endforeach
 

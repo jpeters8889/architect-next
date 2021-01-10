@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace JPeters\Architect\Providers;
 
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 use JPeters\Architect\Architect;
 use JPeters\Architect\Blueprints\Manager;
+use Livewire\Livewire;
 
 class ArchitectApplicationServiceProvider extends ServiceProvider
 {
@@ -19,6 +23,7 @@ class ArchitectApplicationServiceProvider extends ServiceProvider
         $this->bootArchitectLibraries();
         $this->defineArchitectGateway();
         $this->registerBlueprints();
+        $this->bootPlanLivewireComponents();
 
         $this->app->singleton(Architect::class, fn() => $this->architect);
     }
@@ -54,5 +59,19 @@ class ArchitectApplicationServiceProvider extends ServiceProvider
                 return $this->architectGateway($user);
             }
         );
+    }
+
+    protected function bootPlanLivewireComponents(): void
+    {
+        /** @var Filesystem $filesystem */
+        $filesystem = $this->app->make(Filesystem::class);
+        collect($filesystem->directories(__DIR__.'/../Plans'))
+            ->map(function ($directory) {
+                $plan = Arr::last(explode('/', $directory));
+                $namespace = 'JPeters\\Architect\\Plans\\';
+                $alias = 'architect-plan-'.(Str::kebab($plan));
+
+                Livewire::component($alias.'-table', $namespace.$plan.'\\TableComponent');
+            });
     }
 }

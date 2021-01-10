@@ -96,17 +96,30 @@ class BlueprintTableTest extends ArchitectTestCase
         factory(Blog::class)->create(['title' => 'hidden blog']);
         factory(Blog::class)->create(['title' => 'foo blog']);
 
-        $livewire = Livewire::test(Table::class, ['route' => 'blog'])
+        Livewire::test(Table::class, ['route' => 'blog'])
             ->assertSee('hidden blog')
+            ->assertSee('foo blog')
+            ->set('searchText', 'foo blog')
+            ->call('runSearch')
+            ->assertDontSee('hidden blog')
             ->assertSee('foo blog');
+    }
 
-        $this->assertCount(2, $livewire->get('currentData'));
+    /** @test */
+    public function it_can_paginate_data()
+    {
+        factory(Blog::class)->create(['title' => 'First Blog']);
+        factory(Blog::class)->create(['title' => 'Second Blog']);
+        factory(Blog::class)->create(['title' => 'Third Blog']);
 
-        $livewire->set('searchText', 'foo blog')->call('runSearch');
-
-        $this->assertCount(1, $livewire->get('currentData'));
-
-        $livewire->assertDontSee('hidden blog')
-            ->assertSee('foo blog');
+        Livewire::test(Table::class, ['route' => 'blog'])
+            ->assertSee('First Blog')
+            ->assertSee('Second Blog')
+            ->assertDontSee('Third Blog')
+            ->assertSee('Previous')
+            ->assertSee('Next')
+            ->call('setPage', 2)
+            ->assertSee('Third Blog')
+            ->assertDontSee('First Blog');
     }
 }

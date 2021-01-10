@@ -22,7 +22,7 @@ class Table extends Component
     public string $route = '';
     public string $title = '';
     public ?Collection $headers = null;
-    public ?Collection $columns = null;
+    protected ?Collection $plans = null;
     public Collection $currentData;
 
     protected Builder $data;
@@ -49,7 +49,9 @@ class Table extends Component
 
     public function render(): View
     {
-        return view('architect::livewire.blueprints.table');
+        return view('architect::livewire.blueprints.table', [
+            'plans' => $this->plans
+        ]);
     }
 
     protected function populateTableData(): Collection
@@ -58,8 +60,8 @@ class Table extends Component
 
         if ($this->settings['searchable']) {
             $builder->where(function (Builder $query) {
-                foreach ($this->columns as $column) {
-                    $query->orWhere($column, 'like', "%{$this->searchText}%");
+                foreach ($this->plans as $column) {
+                    $query->orWhere($column['column'], 'like', "%{$this->searchText}%");
                 }
             });
         }
@@ -89,7 +91,7 @@ class Table extends Component
 
         $this->title = $this->blueprint->blueprintName();
         $this->headers = $this->tableRenderer->headers();
-        $this->columns = $this->tableRenderer->columns();
+        $this->plans = $this->tableRenderer->plans();
 
         $this->settings['searchable'] = $this->blueprint->searchable();
         $this->settings['canAdd'] = $this->blueprint->canAdd(auth()->user());
@@ -113,7 +115,7 @@ class Table extends Component
 
     public function getPaginationLinksProperty(): ?Htmlable
     {
-        if(!$this->settings['paginated']) {
+        if (!$this->settings['paginated'] || !$this->paginator) {
             return null;
         }
 

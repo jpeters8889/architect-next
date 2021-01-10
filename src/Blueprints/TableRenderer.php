@@ -4,6 +4,7 @@ namespace JPeters\Architect\Blueprints;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use JPeters\Architect\Plans\Plan;
 
 class TableRenderer
@@ -23,11 +24,16 @@ class TableRenderer
             ->values();
     }
 
-    public function columns(): Collection
+    public function plans(): Collection
     {
         return collect($this->blueprint->plans())
-            ->filter(fn(Plan $plan) => $plan->isAvailableOnTableView())
-            ->map(fn(Plan $plan) => $plan->column())
+            ->transform(fn(Plan $plan, int $index) => [
+                'plan' => $plan,
+                'index' => $index,
+                'column' => $plan->column(),
+                'component' => 'architect-plan-'.Str::kebab(class_basename($plan)).'-table',
+            ])
+            ->filter(fn($plan) => $plan['plan']->isAvailableOnTableView())
             ->values();
     }
 

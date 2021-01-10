@@ -5,6 +5,7 @@ namespace JPeters\Architect\Plans;
 use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use JPeters\Architect\Plans\TextField\TextField;
 
 abstract class Plan
 {
@@ -39,7 +40,7 @@ abstract class Plan
 
     public function currentValue(Model $model): mixed
     {
-        if($this->retrievalMethod) {
+        if ($this->retrievalMethod) {
             return call_user_func($this->retrievalMethod, $model);
         }
 
@@ -48,7 +49,7 @@ abstract class Plan
 
     public function currentValueForTable(Model $model): mixed
     {
-        if($this->retrievalMethodForTable) {
+        if ($this->retrievalMethodForTable) {
             return call_user_func($this->retrievalMethodForTable, $model);
         }
 
@@ -97,6 +98,8 @@ abstract class Plan
 
         return $this;
     }
+
+    abstract public function tableComponent(): string;
 
     public function useDefaultValue(mixed $value): static
     {
