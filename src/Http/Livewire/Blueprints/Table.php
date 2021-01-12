@@ -100,7 +100,7 @@ class Table extends Component
         $this->hasBootstrapped = true;
     }
 
-    public function runSearch(): void
+    public function updatedSearchText(): void
     {
         $this->resetPage();
         $this->bootstrap();

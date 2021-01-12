@@ -33,6 +33,8 @@ abstract class BaseTableComponent extends Component
 
     public function mount(): void
     {
+        dump('here');
+
         $this->bootstrap();
     }
 

@@ -5,6 +5,7 @@ namespace JPeters\Architect\Tests\Feature;
 use JPeters\Architect\Blueprints\Manager;
 use JPeters\Architect\Blueprints\TableRenderer;
 use JPeters\Architect\Http\Livewire\Blueprints\Table;
+use JPeters\Architect\Plans\Plan;
 use JPeters\Architect\Tests\ArchitectTestCase;
 use JPeters\Architect\Tests\Laravel\Blueprints\Blog as BlogBlueprint;
 use JPeters\Architect\Tests\Laravel\Models\Blog;
@@ -85,8 +86,8 @@ class BlueprintTableTest extends ArchitectTestCase
 
         $request = Livewire::test(Table::class, ['route' => 'blog']);
 
-        foreach ($this->tableRenderer->columns() as $column) {
-            $request->assertSee($blog->$column);
+        foreach ($this->tableRenderer->plans() as $plan) {
+            $request->assertSee($plan['plan']->currentValueForTable($blog));
         }
     }
 
@@ -99,8 +100,7 @@ class BlueprintTableTest extends ArchitectTestCase
         Livewire::test(Table::class, ['route' => 'blog'])
             ->assertSee('hidden blog')
             ->assertSee('foo blog')
-            ->set('searchText', 'foo blog')
-            ->call('runSearch')
+            ->set('searchText', 'foo')
             ->assertDontSee('hidden blog')
             ->assertSee('foo blog');
     }

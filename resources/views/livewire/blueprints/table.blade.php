@@ -9,7 +9,7 @@
                 </span>
 
                     <input class="w-64 rounded-md pl-10 pr-4 border border-gray-300 focus:border-gray-500 outline-none"
-                           type="search" wire:model="searchText" wire:keyup="runSearch" placeholder="Search...">
+                           type="search" wire:model.debounce.300ms="searchText" placeholder="Search...">
                 </div>
             @endif
 
@@ -37,36 +37,34 @@
         </thead>
 
         <tbody class="bg-white">
-        @forelse($currentData as $row)
-            <tr>
+        @foreach($currentData as $row)
+            <tr wire:key="{{ $row->getKey() }}.'-row'">
                 @foreach($plans as $plan)
-                    <x-architect::components.table.tcell>
+                    <x-architect::components.table.tcell wire:key="{{ time().'-'.$route.'-'.$plan['column'].'-'.$plan['index'].'-'.$row->getKey() }}">
+                        {{ $plan['component'] }}
                         @livewire(
                             $plan['component'],
                             [
-                                'model'=>$row,
-                                'route'=>$route,
-                                'index'=>$plan['index'],
-                                'column'=>$plan['column'],
+                                'model' => $row,
+                                'route' => $route,
+                                'index' => $plan['index'],
+                                'column' => $plan['column'],
                             ],
-                            key($route.'-'.$plan['column'].'-'.$plan['index'].'-'.$row->getKey())
+                            key(time().'-'.$route.'-'.$plan['column'].'-'.$plan['index'].'-'.$row->getKey())
                         )
+                        --end--
                     </x-architect::components.table.tcell>
                 @endforeach
 
                 @if($this->canEditRow($row, auth()->user()))
-                    <x-architect::components.table.tcell class="text-right">
+                    <x-architect::components.table.tcell class="text-right" wire:key="{{ $row->getKey().'-button' }}">
                         <x-architect::components.link-button size="small" href="./{{ $route }}/{{ $row->getKey() }}">
                             Edit
                         </x-architect::components.link-button>
                     </x-architect::components.table.tcell>
                 @endif
             </tr>
-        @empty
-            <tr>
-                sdgsd
-            </tr>
-        @endforelse
+        @endforeach
         </tbody>
     </x-architect::components.table>
 
